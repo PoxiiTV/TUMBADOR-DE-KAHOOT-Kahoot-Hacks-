@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kahoot Adivinador – Respuestas</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Outfit:wght@400;600;700&display=swap');
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: linear-gradient(135deg, #1a0a2e 0%, #16213e 50%, #0f3460 100%);
+      min-height: 100vh;
+      color: #e8e8e8;
+      padding: 2rem;
+    }
+    .container {
+      max-width: 560px;
+      margin: 0 auto;
+    }
+    h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(90deg, #e94560, #ff6b6b);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .subtitle {
+      color: #a0a0a0;
+      font-size: 0.95rem;
+      margin-bottom: 1.5rem;
+    }
+    .input-wrap {
+      display: flex;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+    input {
+      flex: 1;
+      padding: 0.85rem 1rem;
+      border: 2px solid #2a2a4a;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.06);
+      color: #fff;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.95rem;
+    }
+    input::placeholder { color: #6a6a8a; }
+    input:focus {
+      outline: none;
+      border-color: #e94560;
+    }
+    button {
+      padding: 0.85rem 1.5rem;
+      border: none;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #e94560, #c73e54);
+      color: white;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    button:hover { filter: brightness(1.1); }
+    button:disabled { opacity: 0.6; cursor: not-allowed; }
+    .help {
+      font-size: 0.8rem;
+      color: #7a7a9a;
+      margin-bottom: 1.5rem;
+    }
+    .help a { color: #e94560; }
+    #result {
+      margin-top: 1.5rem;
+      padding: 1.25rem;
+      background: rgba(0,0,0,0.25);
+      border-radius: 12px;
+      border: 1px solid rgba(233,69,96,0.2);
+      display: none;
+    }
+    #result.visible { display: block; }
+    #result h2 {
+      font-size: 1rem;
+      color: #e94560;
+      margin-bottom: 0.75rem;
+    }
+    .answers-list {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.9rem;
+      line-height: 1.9;
+    }
+    .answers-list div {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.35rem 0;
+    }
+    .color-dot {
+      width: 1rem;
+      height: 1rem;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .color-dot.red { background: #e94560; }
+    .color-dot.blue { background: #4361ee; }
+    .color-dot.yellow { background: #f9c74f; }
+    .color-dot.green { background: #2a9d8f; }
+    .error {
+      color: #ff6b6b;
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Kahoot Adivinador</h1>
+    <p class="subtitle">Pega el enlace del Kahoot o el Quiz ID y te muestro las respuestas correctas.</p>
+    <div class="input-wrap">
+      <input type="text" id="input" placeholder="https://create.kahoot.it/kahoots/xxxxx o solo el ID">
+      <button id="btn">Obtener respuestas</button>
+    </div>
+    <p class="help">
+      El enlace se ve así: <code>create.kahoot.it/kahoots/abc123-def456...</code>. Si tu amigo comparte ese enlace o lo tiene en la pantalla, cópialo aquí. Con solo el PIN del juego no se puede.
+    </p>
+    <div id="result">
+      <h2>Respuestas correctas (orden del quiz)</h2>
+      <div class="answers-list" id="answersList"></div>
+    </div>
+    <p class="error" id="error"></p>
+  </div>
+  <script>
+    const COLORS = [
+      { key: 'red', hex: '#e94560', emoji: '🔴' },
+      { key: 'blue', hex: '#4361ee', emoji: '🔵' },
+      { key: 'yellow', hex: '#f9c74f', emoji: '🟡' },
+      { key: 'green', hex: '#2a9d8f', emoji: '🟢' }
+    ];
+
+    function extractQuizId(value) {
+      const trimmed = (value || '').trim();
+      const match = trimmed.match(/create\.kahoot\.it\/[^/]+\/([a-f0-9-]+)/i) ||
+                    trimmed.match(/kahoot\.it\/[^/]+\/([a-f0-9-]+)/i);
+      if (match) return match[1];
+      if (/^[a-f0-9-]+$/i.test(trimmed)) return trimmed;
+      return null;
+    }
+
+    async function fetchAnswers() {
+      const input = document.getElementById('input');
+      const btn = document.getElementById('btn');
+      const result = document.getElementById('result');
+      const answersList = document.getElementById('answersList');
+      const errEl = document.getElementById('error');
+
+      const quizId = extractQuizId(input.value);
+      if (!quizId) {
+        errEl.textContent = 'Pon un enlace de Kahoot o el Quiz ID (solo letras/números y guiones).';
+        result.classList.remove('visible');
+        return;
+      }
+      errEl.textContent = '';
+      btn.disabled = true;
+      btn.textContent = 'Cargando…';
+
+      try {
+        const url = `https://create.kahoot.it/rest/kahoots/${quizId}/card/?includeKahoot=true`;
+        const res = await fetch(url);
+        if (!res.ok) throw new Error(res.status === 404 ? 'Quiz no encontrado (¿es privado o el ID es incorrecto?)' : 'No se pudo cargar el quiz.');
+        const data = await res.json();
+        const kahoot = data.kahoot || data;
+        const questions = kahoot.questions || [];
+        if (!questions.length) throw new Error('No hay preguntas en este quiz.');
+
+        answersList.innerHTML = questions.map((q, i) => {
+          const choices = q.choices || [];
+          const correctIndex = choices.findIndex(c => c.correct);
+          const correct = correctIndex >= 0 ? choices[correctIndex] : null;
+          const color = COLORS[correctIndex >= 0 ? correctIndex % 4 : 0];
+          const text = correct ? correct.answer : '(sin respuesta)';
+          return `<div><span class="color-dot ${color.key}"></span><span>P${i + 1}: ${escapeHtml(text)}</span></div>`;
+        }).join('');
+
+        result.classList.add('visible');
+      } catch (e) {
+        errEl.textContent = e.message || 'Error al cargar. Si falla, Kahoot puede estar bloqueando la petición (CORS). Usa el script de Tampermonkey en kahoot.it.';
+        result.classList.remove('visible');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Obtener respuestas';
+      }
+    }
+
+    function escapeHtml(s) {
+      const div = document.createElement('div');
+      div.textContent = s;
+      return div.innerHTML;
+    }
+
+    document.getElementById('btn').addEventListener('click', fetchAnswers);
+    document.getElementById('input').addEventListener('keydown', e => { if (e.key === 'Enter') fetchAnswers(); });
+  </script>
+</body>
+</html>

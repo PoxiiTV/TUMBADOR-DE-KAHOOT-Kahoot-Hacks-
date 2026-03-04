@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>TUMBADOR</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0d1117;
+      --surface: #161b22;
+      --border: #30363d;
+      --text: #e6edf3;
+      --text-muted: #8b949e;
+      --accent: #58a6ff;
+      --success: #3fb950;
+      --error: #f85149;
+      --radius: 14px;
+      --touch: 48px;
+      --safe-top: env(safe-area-inset-top, 0);
+      --safe-bottom: env(safe-area-inset-bottom, 0);
+    }
+    html { -webkit-text-size-adjust: 100%; }
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: var(--bg);
+      min-height: 100vh;
+      min-height: -webkit-fill-available;
+      color: var(--text);
+      padding: var(--safe-top) 16px calc(20px + var(--safe-bottom));
+      line-height: 1.45;
+    }
+    .wrap { max-width: 420px; margin: 0 auto; }
+
+    .brand {
+      text-align: center;
+      padding: 12px 0 20px;
+    }
+    .brand h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #58a6ff 0%, #a371f7 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .tabs button {
+      padding: 14px 12px;
+      min-height: var(--touch);
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      color: var(--text-muted);
+      font-family: inherit;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      transition: border-color 0.2s, color 0.2s, background 0.2s;
+    }
+    .tabs button.active {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: rgba(88, 166, 255, 0.1);
+    }
+    .tabs-bottom { margin-top: 28px; }
+    .tabs-bottom .tab-btn { width: 100%; }
+
+    .panel { display: none; }
+    .panel.on { display: block; }
+
+    .block {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+    .block h2 {
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+
+    .field { margin-bottom: 16px; }
+    .field:last-child { margin-bottom: 0; }
+    .field label {
+      display: block;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+    input[type="text"],
+    input[type="number"],
+    textarea {
+      width: 100%;
+      padding: 14px 16px;
+      min-height: var(--touch);
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      background: var(--bg);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 16px;
+      -webkit-appearance: none;
+      appearance: none;
+      transition: border-color 0.2s;
+    }
+    input[type="number"] { max-width: 100px; }
+    input::placeholder, textarea::placeholder { color: var(--text-muted); opacity: 0.9; }
+    input:focus, textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+    textarea {
+      min-height: 140px;
+      resize: vertical;
+      line-height: 1.5;
+    }
+
+    .actions { display: flex; flex-direction: column; gap: 10px; margin-top: 16px; }
+    .actions.row { flex-direction: row; flex-wrap: wrap; }
+    button {
+      padding: 14px 20px;
+      min-height: var(--touch);
+      border: none;
+      border-radius: 12px;
+      font-family: inherit;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      transition: filter 0.15s, transform 0.1s;
+    }
+    button:active { transform: scale(0.98); }
+    button:disabled { opacity: 0.55; cursor: not-allowed; }
+    .btn-main {
+      background: linear-gradient(135deg, #58a6ff 0%, #388bfd 100%);
+      color: #fff;
+      width: 100%;
+    }
+    .btn-main:not(:disabled):active { filter: brightness(1.1); }
+    .btn-sec {
+      background: var(--bg);
+      color: var(--accent);
+      border: 2px solid var(--border);
+      flex: 1;
+      min-width: 0;
+    }
+    .btn-danger {
+      background: linear-gradient(135deg, #f85149 0%, #da3633 100%);
+      color: #fff;
+      flex: 1;
+      min-width: 0;
+    }
+    .btn-sec-small {
+      background: var(--bg);
+      color: var(--text-muted);
+      border: 2px solid var(--border);
+      font-size: 0.9rem;
+      padding: 10px 16px;
+      min-height: 44px;
+    }
+
+    .toggle-wrap {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 14px 0;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .toggle-wrap input[type="checkbox"] {
+      width: 22px;
+      height: 22px;
+      min-width: 22px;
+      min-height: 22px;
+      margin-top: 2px;
+      accent-color: var(--accent);
+    }
+    .toggle-wrap span { font-size: 0.9rem; color: var(--text); line-height: 1.4; }
+
+    .log {
+      padding: 14px;
+      background: var(--bg);
+      border-radius: 10px;
+      font-size: 0.85rem;
+      min-height: 100px;
+      max-height: 200px;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .log:empty::before { content: 'Aquí verás el estado…'; color: var(--text-muted); }
+    .log .ln { margin-bottom: 4px; }
+    .log .ok { color: var(--success); }
+    .log .err { color: var(--error); }
+    .log .done { color: var(--accent); font-weight: 600; }
+
+    .collapse summary {
+      list-style: none;
+      padding: 12px 0;
+      font-weight: 600;
+      color: var(--accent);
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .collapse summary::-webkit-details-marker { display: none; }
+    .collapse summary::after { content: '▼'; font-size: 0.7rem; opacity: 0.8; }
+    .collapse[open] summary::after { transform: rotate(180deg); }
+    .collapse .in { padding-top: 8px; border-top: 1px solid var(--border); margin-top: 8px; }
+
+    .ultra-desc { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 16px; line-height: 1.45; }
+
+    .last-pin {
+      padding: 14px 16px;
+      background: var(--bg);
+      border-radius: 10px;
+      margin-bottom: 12px;
+      font-size: 0.9rem;
+    }
+    .last-pin strong { color: var(--accent); }
+    .log-universal {
+      padding: 14px;
+      background: var(--bg);
+      border-radius: 10px;
+      font-size: 0.8rem;
+      max-height: 320px;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    .log-universal .le { margin-bottom: 6px; padding: 4px 0; border-bottom: 1px solid var(--border); }
+    .log-universal .le:last-child { border-bottom: none; }
+    .log-universal .time { color: var(--text-muted); font-size: 0.75rem; margin-right: 8px; }
+    .log-universal .le.accent { color: var(--accent); }
+    .log-universal .le.done { color: var(--success); }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="brand">
+      <h1>TUMBADOR</h1>
+    </header>
+
+    <nav class="tabs">
+      <button type="button" class="tab-btn active" data-tab="normal">Entrar bots</button>
+      <button type="button" class="tab-btn" data-tab="ultra">Ultra ataque</button>
+    </nav>
+
+    <section id="panel-normal" class="panel on">
+      <div class="block">
+        <h2>Código del juego</h2>
+        <div class="field">
+          <label for="pin">PIN (el número que sale en la pantalla)</label>
+          <input type="text" id="pin" placeholder="Ej: 1234567" maxlength="10" inputmode="numeric" autocomplete="off">
+        </div>
+        <div class="actions">
+          <button type="button" class="btn-main" id="btnStart">Entrar bots</button>
+          <div class="actions row">
+            <button type="button" class="btn-sec" id="btnStop">Sacar todos</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="block">
+        <details class="collapse">
+          <summary>Número y nombres de los bots</summary>
+          <div class="in">
+            <div class="field">
+              <label for="numBots">Cuántos bots</label>
+              <input type="number" id="numBots" min="1" value="50">
+            </div>
+            <div class="field">
+              <label for="names">Nombres (uno por línea)</label>
+              <textarea id="names" placeholder="Un nombre por línea. Si pones menos, se repetirán."></textarea>
+            </div>
+            <button type="button" class="btn-sec-small" id="btnRestore">Usar 50 nombres por defecto</button>
+          </div>
+        </details>
+      </div>
+
+      <div class="block">
+        <h2>Estado</h2>
+        <div class="log" id="log"></div>
+      </div>
+    </section>
+
+    <section id="panel-ultra" class="panel">
+      <div class="block">
+        <h2>Ultra ataque</h2>
+        <p class="ultra-desc">Envía 50 bots, a los 4 segundos los saca y vuelve a enviar. Se repite hasta que pares.</p>
+        <div class="field">
+          <label for="pinUltra">PIN del Kahoot</label>
+          <input type="text" id="pinUltra" placeholder="Ej: 1234567" maxlength="10" inputmode="numeric" autocomplete="off">
+        </div>
+        <label class="toggle-wrap">
+          <input type="checkbox" id="ultraContinuo">
+          <span>Enviar 50 bots cada segundo además del bucle (más intenso)</span>
+        </label>
+        <div class="actions">
+          <button type="button" class="btn-main" id="btnUltraStart">Iniciar ataque</button>
+          <button type="button" class="btn-danger" id="btnUltraStop" disabled>Parar ataque</button>
+        </div>
+      </div>
+      <div class="block">
+        <h2>Estado</h2>
+        <div class="log" id="logUltra"></div>
+      </div>
+    </section>
+
+    <section id="panel-logs" class="panel">
+      <div class="block">
+        <h2>Log universal</h2>
+        <p class="last-pin">Último código usado: <strong id="lastPinDisplay">—</strong></p>
+        <p class="ultra-desc" style="margin-bottom: 8px;">Toda la actividad (desde esta app o desde otro dispositivo) aparece aquí.</p>
+        <button type="button" class="btn-sec-small" id="btnClearLogs" style="margin-bottom: 12px;">Limpiar log</button>
+        <div class="log-universal" id="logUniversal"></div>
+      </div>
+    </section>
+
+    <nav class="tabs tabs-bottom">
+      <button type="button" class="tab-btn" data-tab="logs">Logs</button>
+    </nav>
+  </div>
+
+  <script>
+    const pinEl = document.getElementById("pin");
+    const numBotsEl = document.getElementById("numBots");
+    const namesEl = document.getElementById("names");
+    const btnStart = document.getElementById("btnStart");
+    const btnRestore = document.getElementById("btnRestore");
+    const btnStop = document.getElementById("btnStop");
+    const logEl = document.getElementById("log");
+
+    function log(text, type = "") {
+      const line = document.createElement("div");
+      line.className = "ln " + type;
+      line.textContent = text;
+      logEl.appendChild(line);
+      logEl.scrollTop = logEl.scrollHeight;
+    }
+    function clearLog() { logEl.innerHTML = ""; }
+
+    async function loadDefaultNames() {
+      try {
+        const r = await fetch("/api/default-names");
+        const arr = await r.json();
+        namesEl.value = Array.isArray(arr) ? arr.join("\n") : "";
+      } catch (_) {
+        namesEl.value = "Bot 1\nBot 2\nBot 3\nBot 4\nBot 5";
+      }
+    }
+
+    btnRestore.addEventListener("click", loadDefaultNames);
+
+    btnStop.addEventListener("click", async () => {
+      if (!confirm("¿Sacar todos los bots de la partida?")) return;
+      btnStop.disabled = true;
+      try {
+        const r = await fetch("/api/stop", { method: "POST" });
+        const data = await r.json().catch(() => ({}));
+        if (r.ok && data.count !== undefined) log("Salieron " + data.count + " bots.", "done");
+        else log("No hay bots o hubo error.", "err");
+      } catch (e) { log("Error: " + (e.message || ""), "err"); }
+      finally { btnStop.disabled = false; }
+    });
+
+    btnStart.addEventListener("click", async () => {
+      const pin = pinEl.value.trim();
+      if (!pin) { log("Escribe el PIN.", "err"); return; }
+      const numBots = Math.max(1, parseInt(numBotsEl.value, 10) || 5);
+      const namesText = namesEl.value.trim();
+      const names = namesText ? namesText.split(/\r?\n/).map(s => s.trim()).filter(Boolean) : [];
+
+      clearLog();
+      log("Conectando… " + numBots + " bots");
+      btnStart.disabled = true;
+      try {
+        const res = await fetch("/api/start", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ pin, numBots, names: names.length ? names : undefined }),
+        });
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          log("Error: " + (err.error || res.status), "err");
+          return;
+        }
+        const reader = res.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = "";
+        while (true) {
+          const { value, done } = await reader.read();
+          if (done) break;
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split("\n\n");
+          buffer = lines.pop() || "";
+          for (const line of lines) {
+            const m = line.match(/^data:\s*(.+)/);
+            if (!m) continue;
+            try {
+              const data = JSON.parse(m[1]);
+              if (data.type === "joined") log("Bot " + data.index + "/" + data.total + ": " + data.name, "ok");
+              else if (data.type === "error") log(data.msg || "Error", "err");
+              else if (data.type === "done") log("Listo. " + data.count + " bots en el lobby.", "done");
+            } catch (_) {}
+          }
+        }
+      } catch (e) {
+        log("Error de conexión.", "err");
+      } finally {
+        btnStart.disabled = false;
+      }
+    });
+
+    loadDefaultNames();
+
+    let logsPollId = null;
+
+    function formatLogTime(ts) {
+      const d = new Date(ts);
+      return d.getHours().toString().padStart(2,"0") + ":" + d.getMinutes().toString().padStart(2,"0") + ":" + d.getSeconds().toString().padStart(2,"0");
+    }
+
+    function renderLogs(data) {
+      const lastEl = document.getElementById("lastPinDisplay");
+      const listEl = document.getElementById("logUniversal");
+      if (lastEl) lastEl.textContent = data.lastPin || "—";
+      if (!listEl) return;
+      if (!data.logs || data.logs.length === 0) {
+        listEl.innerHTML = "<p style='color: var(--text-muted);'>Aún no hay actividad.</p>";
+        return;
+      }
+      listEl.innerHTML = data.logs.map((e) => {
+        const cls = e.type === "start" ? "accent" : e.type === "stop" ? "done" : "";
+        return "<div class='le " + cls + "'><span class='time'>" + formatLogTime(e.t) + "</span>" + escapeHtml(e.msg) + "</div>";
+      }).reverse().join("");
+    }
+
+    function escapeHtml(s) {
+      const div = document.createElement("div");
+      div.textContent = s;
+      return div.innerHTML;
+    }
+
+    async function fetchLogs() {
+      try {
+        const r = await fetch("/api/logs", { cache: "no-store" });
+        if (!r.ok) return;
+        const data = await r.json();
+        renderLogs(data);
+      } catch (_) {
+        const listEl = document.getElementById("logUniversal");
+        if (listEl && listEl.closest(".panel.on")) listEl.innerHTML = "<p style='color: var(--error);'>No se pudo cargar. ¿Misma red y misma URL del servidor?</p>";
+      }
+    }
+
+    document.querySelectorAll(".tab-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const tab = btn.dataset.tab;
+        document.querySelectorAll(".tab-btn").forEach((b) => b.classList.remove("active"));
+        document.querySelectorAll(".panel").forEach((p) => p.classList.remove("on"));
+        btn.classList.add("active");
+        document.getElementById("panel-" + tab).classList.add("on");
+        if (logsPollId) clearInterval(logsPollId);
+        logsPollId = null;
+        if (tab === "logs") {
+          fetchLogs();
+          logsPollId = setInterval(fetchLogs, 2500);
+        }
+      });
+    });
+
+    document.body.addEventListener("click", (e) => {
+      if (e.target.id !== "btnClearLogs" && !e.target.closest("#btnClearLogs")) return;
+      e.preventDefault();
+      fetch("/api/logs/clear", { method: "POST" }).then(() => fetchLogs()).catch(() => {});
+    });
+
+    const pinUltraEl = document.getElementById("pinUltra");
+    const btnUltraStart = document.getElementById("btnUltraStart");
+    const btnUltraStop = document.getElementById("btnUltraStop");
+    const logUltraEl = document.getElementById("logUltra");
+    let ultraAttackRunning = false;
+
+    function logUltra(text, type = "") {
+      const line = document.createElement("div");
+      line.className = "ln " + type;
+      line.textContent = text;
+      logUltraEl.appendChild(line);
+      logUltraEl.scrollTop = logUltraEl.scrollHeight;
+    }
+    function clearLogUltra() { logUltraEl.innerHTML = ""; }
+
+    btnUltraStart.addEventListener("click", async () => {
+      const pin = pinUltraEl.value.trim();
+      if (!pin) { logUltra("Escribe el PIN.", "err"); return; }
+      ultraAttackRunning = true;
+      clearLogUltra();
+      btnUltraStart.disabled = true;
+      btnUltraStop.disabled = false;
+      const ultraContinuoEl = document.getElementById("ultraContinuo");
+
+      if (ultraContinuoEl.checked) {
+        (async function continuousLoop() {
+          while (ultraAttackRunning && ultraContinuoEl.checked) {
+            fetch("/api/start", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ pin, numBots: 50, append: true }),
+            }).then((r) => r.body && r.body.cancel && r.body.cancel()).catch(() => {});
+            await new Promise((r) => setTimeout(r, 1000));
+          }
+        })();
+      }
+
+      let cycle = 0;
+      while (ultraAttackRunning) {
+        cycle++;
+        logUltra("Ciclo " + cycle + ": 50 bots, 4 s…", "ok");
+        try {
+          fetch("/api/start", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ pin, numBots: 50 }),
+          }).then((r) => r.body && r.body.cancel && r.body.cancel()).catch(() => {});
+          await new Promise((r) => setTimeout(r, 4000));
+          if (!ultraAttackRunning) break;
+          const stopRes = await fetch("/api/stop", { method: "POST" });
+          const stopData = await stopRes.json().catch(() => ({}));
+          logUltra("Salieron " + (stopData.count || 0) + " bots.", "done");
+        } catch (e) {
+          logUltra("Error: " + (e.message || ""), "err");
+          await new Promise((r) => setTimeout(r, 2000));
+        }
+      }
+      logUltra("Parado.", "done");
+      btnUltraStart.disabled = false;
+      btnUltraStop.disabled = true;
+    });
+
+    btnUltraStop.addEventListener("click", () => { ultraAttackRunning = false; });
+  </script>
+</body>
+</html>
