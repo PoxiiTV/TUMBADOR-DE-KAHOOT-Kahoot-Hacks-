@@ -3,6 +3,15 @@ const path = require("path");
 
 const PORT = 32853;
 
+function getIconPath() {
+  if (process.platform === "win32") {
+    const ico = path.join(__dirname, "icon.ico");
+    const fs = require("fs");
+    if (fs.existsSync(ico)) return ico;
+  }
+  return path.join(__dirname, "icono.png");
+}
+
 function createWindow() {
   const win = new BrowserWindow({
     width: 440,
@@ -10,7 +19,7 @@ function createWindow() {
     minWidth: 380,
     minHeight: 500,
     title: "TUMBADOR DE KAHOOT (Kahoot Hacks)",
-    icon: path.join(__dirname, "icono.png"),
+    icon: getIconPath(),
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,

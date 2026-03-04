@@ -25,7 +25,13 @@
       --safe-top: env(safe-area-inset-top, 0);
       --safe-bottom: env(safe-area-inset-bottom, 0);
     }
-    html { -webkit-text-size-adjust: 100%; }
+    html {
+      -webkit-text-size-adjust: 100%;
+      overflow: auto;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+    html::-webkit-scrollbar { display: none; }
     body {
       font-family: 'Outfit', sans-serif;
       background: var(--bg);
@@ -34,7 +40,10 @@
       color: var(--text);
       padding: var(--safe-top) 16px calc(20px + var(--safe-bottom));
       line-height: 1.45;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
     }
+    body::-webkit-scrollbar { display: none; }
     .wrap { max-width: 420px; margin: 0 auto; }
 
     .brand {
@@ -205,7 +214,10 @@
       max-height: 200px;
       overflow-y: auto;
       -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
     }
+    .log::-webkit-scrollbar { display: none; }
     .log:empty::before { content: 'Aquí verás el estado…'; color: var(--text-muted); }
     .log .ln { margin-bottom: 4px; }
     .log .ok { color: var(--success); }
@@ -246,7 +258,10 @@
       max-height: 320px;
       overflow-y: auto;
       -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
     }
+    .log-universal::-webkit-scrollbar { display: none; }
     .log-universal .le { margin-bottom: 6px; padding: 4px 0; border-bottom: 1px solid var(--border); }
     .log-universal .le:last-child { border-bottom: none; }
     .log-universal .time { color: var(--text-muted); font-size: 0.75rem; margin-right: 8px; }

@@ -11,8 +11,9 @@
     "web": "node server.js",
     "start": "node bot.js",
     "electron": "electron .",
-    "build": "electron-builder --win portable",
-    "dist": "electron-builder --win portable"
+    "build-icon": "node build-icon.js",
+    "build": "npm run build-icon && electron-builder --win portable",
+    "dist": "npm run build-icon && electron-builder --win portable"
   },
   "dependencies": {
     "express": "^4.18.2",
@@ -20,7 +21,9 @@
   },
   "devDependencies": {
     "electron": "^28.0.0",
-    "electron-builder": "^24.9.1"
+    "electron-builder": "^24.9.1",
+    "sharp": "^0.33.0",
+    "to-ico": "^1.1.5"
   },
   "build": {
     "appId": "com.tumbador.kahoot",
@@ -30,12 +33,15 @@
       "electron.js",
       "server.js",
       "runBots.js",
+      "build-icon.js",
+      "icon.ico",
+      "icono.png",
       "public/**/*",
       "node_modules/**/*"
     ],
     "win": {
       "target": [{ "target": "portable", "arch": ["x64"] }],
-      "icon": "icono.png"
+      "icon": "icon.ico"
     },
     "portable": {
       "artifactName": "TUMBADOR-Kahoot-Hacks-${version}.exe"
