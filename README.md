@@ -4,10 +4,6 @@
 
 Herramienta de escritorio y web para lanzar bots en partidas de Kahoot: entrar con un montón de nombres, modo ultra ataque y logs en tiempo real.
 
-![Interfaz TUMBADOR](interfaz.png)
-
-*Captura de la interfaz (navegador o .exe).*
-
 ---
 
 ## ✨ Qué hace
