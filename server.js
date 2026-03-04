@@ -21,7 +21,10 @@ function addLog(msg, type = "info") {
 }
 
 app.use(express.json({ limit: "500kb" }));
-app.use(express.static(path.join(__dirname, "public")));
+const publicDir = typeof process.pkg !== "undefined"
+  ? path.join(path.dirname(process.execPath), "public")
+  : path.join(__dirname, "public");
+app.use(express.static(publicDir));
 
 app.get("/api/default-names", (req, res) => {
   res.json(NOMBRES_DEFAULT);
@@ -93,6 +96,16 @@ const onListen = () => {
   console.log("Servidor: http://0.0.0.0:" + PORT);
   console.log("Acceso local: http://localhost:" + PORT);
   console.log("Acceso desde la red: http://TU_IP:" + PORT + " (sustituye TU_IP por tu IP pública o local)");
+  if (require.main === module) {
+    const url = "http://localhost:" + PORT;
+    const { exec } = require("child_process");
+    const cmd = process.platform === "win32"
+      ? `start "" "${url}"`
+      : process.platform === "darwin"
+        ? `open "${url}"`
+        : `xdg-open "${url}"`;
+    exec(cmd, () => {});
+  }
 };
 
 if (require.main === module) {

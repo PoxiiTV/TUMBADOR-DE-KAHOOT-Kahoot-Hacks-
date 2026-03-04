@@ -4,6 +4,10 @@
 
 Herramienta de escritorio y web para lanzar bots en partidas de Kahoot: entrar con un montón de nombres, modo ultra ataque y logs en tiempo real.
 
+![Interfaz TUMBADOR](interfaz.png)
+
+*Captura de la interfaz (navegador o .exe).*
+
 ---
 
 ## ✨ Qué hace
@@ -21,58 +25,50 @@ El servidor escucha en el **puerto 32853** en **0.0.0.0**, así que puedes abrir
 
 ---
 
-## 📥 Descargar el .exe ya compilado
-
-Puedes descargar el ejecutable listo para usar (sin instalar nada) desde las **Releases** del repositorio:
+## 📥 Descargar ya compilado (Releases)
 
 👉 **[Releases — TUMBADOR DE KAHOOT](https://github.com/PoxiiTV/TUMBADOR-DE-KAHOOT-Kahoot-Hacks-/releases)**
 
-Con el **.exe no hace falta instalar Node.js ni ninguna otra dependencia**: el ejecutable lleva todo incluido (Electron + Node). Solo descargas el `.exe`, lo ejecutas y se abre la ventana de la app.
+Descarga el ZIP de la última release. **No hace falta instalar Node.js ni nada:** el .exe lleva todo incluido.
+
+### Instrucciones de uso (versión .exe)
+
+1. **Descomprime** el ZIP en una carpeta.
+2. Dentro debe haber el **.exe** y la carpeta **`public`** (juntos en la misma carpeta).
+3. **Ejecuta el .exe.** Se abrirá una ventana negra del servidor y **el navegador** con la interfaz en `http://localhost:32853`.
+4. **No cierres** la ventana del servidor mientras uses la app. Para salir, cierra esa ventana y la pestaña del navegador.
+5. Opcional: desde otro dispositivo en la red puedes abrir `http://TU_IP:32853` (sustituye TU_IP por la IP del PC donde corre el .exe).
 
 ---
 
 ## 📋 Qué hace falta para que funcione
 
-- **Si usas el .exe de Releases:** nada. Solo ejecutar el archivo.
+- **Si usas el .exe de Releases:** nada. Solo descomprimir el ZIP y ejecutar el .exe (con la carpeta `public` junto a él).
 - **Si quieres ejecutar el código o compilar tú el .exe:**  
   - **Node.js** (v16 o superior). [Descarga Node.js](https://nodejs.org/) si no lo tienes.  
-  - Dependencias del proyecto (se instalan con `npm install`).
+  - En la carpeta del proyecto: `npm install` y luego `npm run build` o `compilar-exe.bat`.
 
 ---
 
 ## 🚀 Cómo ejecutar el proyecto
 
-### Opción 1: En el navegador (modo desarrollo)
+### Opción 1: Navegador (desarrollo)
 
-1. Clona o descarga el repositorio.
-2. En la carpeta del proyecto:
-   ```bash
-   npm install
-   npm run web
-   ```
-3. Abre en el navegador: **http://localhost:32853**
+1. En la carpeta del proyecto: `npm install` y luego `npm run web` (o `iniciar-servidor.bat`).
+2. Abre en el navegador: **http://localhost:32853**
 
-### Opción 2: App de escritorio (Electron)
+### Opción 2: Ventana de escritorio (Electron)
 
-1. Instala dependencias (incluidas las de Electron):
-   ```bash
-   npm install
-   ```
-2. Lanza la aplicación con ventana:
-   ```bash
-   npm run electron
-   ```
-   Se abrirá una ventana con la misma interfaz que en el navegador.
+1. Arranca el servidor en una terminal: `iniciar-servidor.bat` o `npm run web`. Deja esa ventana abierta.
+2. En otra terminal: `npm run electron`. Se abrirá la ventana de TUMBADOR.
 
-### Opción 3: Ejecutable portable (.exe) — sin instalar nada
+### Opción 3: Un solo .exe (portable)
 
-- Descarga el `.exe` desde [Releases](https://github.com/PoxiiTV/TUMBADOR-DE-KAHOOT-Kahoot-Hacks-/releases) o genera uno con `npm run build`.
-- **No hace falta tener Node.js ni nada instalado**: el .exe es portable y lleva todo incluido.
-- Ejecútalo y se abrirá la ventana de TUMBADOR. El primer arranque puede tardar un poco.
+Ejecuta el .exe (con la carpeta **`public`** junto a él). Se abrirá una ventana del servidor y **el navegador** con la interfaz en `http://localhost:32853`. No cierres la ventana del servidor mientras uses la app.
 
 ---
 
-## 🔨 Cómo generar el .exe portable
+## 🔨 Cómo generar el .exe (para subir a Releases)
 
 Desde la carpeta del proyecto, con Node.js instalado:
 
@@ -81,11 +77,13 @@ npm install
 npm run build
 ```
 
-El ejecutable se generará en la carpeta **`dist`**, con un nombre similar a:
+O doble clic en **`compilar-exe.bat`**.
 
-`TUMBADOR-Kahoot-Hacks-1.0.0.exe`
+En la carpeta **`dist`** se generan:
+- **`TUMBADOR-Kahoot-Hacks-1.0.0.exe`** (o la versión que tengas en `package.json`)
+- **`public/`** (carpeta con la interfaz web)
 
-- **Icono:** La build usa el archivo **`icono.png`** en la raíz del proyecto como icono de la app. Si no existe, se usará el icono por defecto de Electron. Coloca tu `icono.png` (por ejemplo 256×256 px) en la raíz antes de ejecutar `npm run build`.
+**Para subir a Releases:** comprime en un ZIP la carpeta **`dist`** completa (el .exe y la carpeta `public` dentro del ZIP). Los usuarios descomprimen y ejecutan el .exe; no necesitan Node.
 
 ---
 
@@ -93,8 +91,8 @@ El ejecutable se generará en la carpeta **`dist`**, con un nombre similar a:
 
 | Archivo / carpeta   | Uso |
 |---------------------|-----|
-| `electron.js`       | Proceso principal de Electron: inicia el servidor y abre la ventana. |
-| `server.js`         | Servidor Express (API y archivos estáticos). |
+| `electron.js`       | Opcional: ventana Electron; para desarrollo con `npm run electron`. |
+| `server.js`         | Servidor Express (API y bots). Es el .exe: al ejecutarlo abre el navegador en localhost:32853. |
 | `runBots.js`        | Lógica de los bots (nombres por defecto, `runBots`, referencias a clientes). |
 | `public/`           | Interfaz web (HTML, CSS, JS). |
 | `icono.png`         | Icono de la aplicación (opcional; recomendado para el .exe). |
@@ -117,6 +115,10 @@ Proyecto de código abierto. Si lo subes a GitHub, indica la licencia que prefie
 
 Desktop and web tool to run bots in Kahoot games: join with many names, ultra-attack mode, and real-time logs.
 
+![TUMBADOR interface](interfaz.png)
+
+*Screenshot of the interface (browser or .exe).*
+
 ---
 
 ## ✨ What it does
@@ -134,58 +136,50 @@ The server listens on **port 32853** on **0.0.0.0**, so you can open the interfa
 
 ---
 
-## 📥 Download the pre-built .exe
-
-You can download the ready-to-use executable (no installation required) from the repository **Releases**:
+## 📥 Download pre-built (Releases)
 
 👉 **[Releases — TUMBADOR DE KAHOOT](https://github.com/PoxiiTV/TUMBADOR-DE-KAHOOT-Kahoot-Hacks-/releases)**
 
-**You do not need to install Node.js or any other dependency** when using the .exe: the executable is self-contained (Electron + Node). Just download the `.exe`, run it, and the app window opens.
+Download the latest release ZIP. **No need to install Node.js or anything else:** the .exe is self-contained.
+
+### How to use (.exe version)
+
+1. **Unzip** the ZIP into a folder.
+2. You should see the **.exe** and the **`public`** folder in the same folder.
+3. **Run the .exe.** A server window will open and **your browser** will open the interface at `http://localhost:32853`.
+4. **Do not close** the server window while using the app. To exit, close that window and the browser tab.
+5. Optional: from another device on the network you can open `http://YOUR_IP:32853` (replace YOUR_IP with the PC’s IP where the .exe is running).
 
 ---
 
 ## 📋 Requirements
 
-- **If you use the .exe from Releases:** none. Just run the file.
-- **If you want to run the source code or build the .exe yourself:**  
-  - **Node.js** (v16 or newer). [Download Node.js](https://nodejs.org/) if you don't have it.  
-  - Project dependencies (install with `npm install`).
+- **If you use the .exe from Releases:** none. Just unzip and run the .exe (keep the `public` folder next to it).
+- **If you want to run the source or build the .exe yourself:**  
+  - **Node.js** (v16 or newer). [Download Node.js](https://nodejs.org/) if you don’t have it.  
+  - In the project folder: `npm install` then `npm run build` or `compilar-exe.bat`.
 
 ---
 
 ## 🚀 How to run the project
 
-### Option 1: In the browser (development)
+### Option 1: Browser (development)
 
-1. Clone or download the repository.
-2. In the project folder:
-   ```bash
-   npm install
-   npm run web
-   ```
-3. Open in your browser: **http://localhost:32853**
+1. In the project folder: `npm install` then `npm run web` (or `iniciar-servidor.bat`).
+2. Open in your browser: **http://localhost:32853**
 
-### Option 2: Desktop app (Electron)
+### Option 2: Desktop window (Electron)
 
-1. Install dependencies (including Electron):
-   ```bash
-   npm install
-   ```
-2. Launch the app with a window:
-   ```bash
-   npm run electron
-   ```
-   A window with the same interface as in the browser will open.
+1. Start the server in one terminal: `iniciar-servidor.bat` or `npm run web`. Keep that window open.
+2. In another terminal: `npm run electron`. The TUMBADOR window will open.
 
-### Option 3: Portable .exe — no installation
+### Option 3: Single .exe (portable)
 
-- Download the `.exe` from [Releases](https://github.com/PoxiiTV/TUMBADOR-DE-KAHOOT-Kahoot-Hacks-/releases) or build one with `npm run build`.
-- **No need for Node.js or anything else**: the .exe is portable and self-contained.
-- Run it and the TUMBADOR window will open. The first launch may take a moment.
+Run the .exe (with the **`public`** folder next to it). A server window will open and **your browser** will open the interface at `http://localhost:32853`. Don’t close the server window while using the app.
 
 ---
 
-## 🔨 How to build the portable .exe
+## 🔨 How to build the .exe (for Releases)
 
 From the project folder, with Node.js installed:
 
@@ -194,11 +188,13 @@ npm install
 npm run build
 ```
 
-The executable will be in the **`dist`** folder, with a name like:
+Or double-click **`compilar-exe.bat`**.
 
-`TUMBADOR-Kahoot-Hacks-1.0.0.exe`
+The **`dist`** folder will contain:
+- **`TUMBADOR-Kahoot-Hacks-1.0.0.exe`** (or your `package.json` version)
+- **`public/`** (folder with the web UI)
 
-- **Icon:** The build uses **`icono.png`** in the project root as the app icon. If it doesn't exist, Electron's default icon is used. Place your `icono.png` (e.g. 256×256 px) in the root before running `npm run build`.
+**To upload to Releases:** zip the entire **`dist`** folder (the .exe and the `public` folder inside the ZIP). Users unzip and run the .exe; they don’t need Node.
 
 ---
 
@@ -206,8 +202,8 @@ The executable will be in the **`dist`** folder, with a name like:
 
 | File / folder   | Purpose |
 |-----------------|---------|
-| `electron.js`   | Electron main process: starts the server and opens the window. |
-| `server.js`    | Express server (API and static files). |
+| `electron.js`   | Optional: Electron window; for development with `npm run electron`. |
+| `server.js`    | Express server (API and bots). This is what the .exe runs: it opens the browser at localhost:32853. |
 | `runBots.js`   | Bot logic (default names, `runBots`, client references). |
 | `public/`      | Web UI (HTML, CSS, JS). |
 | `icono.png`    | App icon (optional; recommended for the .exe). |
