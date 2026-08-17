@@ -103,7 +103,11 @@ En la carpeta **`dist`** se generan:
 
 ## 📄 Licencia
 
-Proyecto de código abierto. Si lo subes a GitHub, indica la licencia que prefieras (MIT, GPL, etc.) en el repositorio.
+Este proyecto se distribuye bajo la **PolyForm Noncommercial License 1.0.0** 🔒.
+
+Puedes usarlo, copiarlo y modificarlo libremente para **uso personal** — incluyendo su uso educativo. Lo que **no** está permitido es el **uso comercial**: no se puede vender ni obtener beneficio económico directo o indirecto con esta herramienta.
+
+📄 Texto completo en [`LICENSE`](LICENSE).
 
 ---
 
@@ -214,4 +218,8 @@ The **`dist`** folder will contain:
 
 ## 📄 License
 
-Open-source project. If you publish it on GitHub, state the license you prefer (MIT, GPL, etc.) in the repository.
+This project is distributed under the **PolyForm Noncommercial License 1.0.0** 🔒.
+
+You can freely use, copy and modify it for **personal use** — including educational use. **Commercial use is not allowed**: you cannot sell it or derive any direct or indirect economic benefit from this tool.
+
+📄 Full text in [`LICENSE`](LICENSE).
